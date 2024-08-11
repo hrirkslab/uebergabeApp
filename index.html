@@ -16,8 +16,10 @@
         <!-- User Login -->
         <div id="login-section" class="bg-white p-4 rounded shadow mb-8 w-full max-w-md mx-auto">
             <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
-            <input type="text" id="username" class="mt-1 block w-full p-2 border rounded" placeholder="Enter your username">
-            <button id="login-btn" class="mt-3 w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">Login</button>
+            <input type="text" id="username" class="mt-1 block w-full p-2 border rounded"
+                placeholder="Enter your username">
+            <button id="login-btn"
+                class="mt-3 w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">Login</button>
         </div>
 
         <!-- Task Management Section -->
@@ -57,9 +59,42 @@
                     <input type="number" id="task-relevancy" class="mt-1 block w-full p-2 border rounded" value="0">
                 </div>
                 <div class="col-span-1 lg:col-span-3">
-                    <button type="submit" class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600">Add Task</button>
+                    <button type="submit" class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600">Add
+                        Task</button>
                 </div>
             </form>
+
+            <!-- Filter Buttons -->
+            <!-- Divider Line after Add Task Form -->
+            <hr class="my-4 border-t-2 border-gray-200">
+            <div class="mt-4 flex justify-between items-center">
+                <div class="space-x-2 flex">
+                    <button id="filter-all-btn" class="bg-gray-500 text-white px-3 py-2 rounded hover:bg-gray-600"
+                        title="Show All">
+                        <i class="fas fa-list"></i>
+                    </button>
+                    <button id="filter-todo-btn" class="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600"
+                        title="Show To Do">
+                        <i class="fas fa-tasks"></i>
+                    </button>
+                    <button id="filter-info-btn" class="bg-yellow-500 text-white px-3 py-2 rounded hover:bg-yellow-600"
+                        title="Show Info">
+                        <i class="fas fa-info-circle"></i>
+                    </button>
+                    <button id="filter-done-btn" class="bg-green-500 text-white px-3 py-2 rounded hover:bg-green-600"
+                        title="Show Completed">
+                        <i class="fas fa-check-circle"></i>
+                    </button>
+                </div>
+                <button id="remove-done-btn"
+                    class="bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600 flex items-center"
+                    title="Remove Completed Tasks">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+            </div>
+            <!-- Divider Line after Add Task Form -->
+            <hr class="my-4 border-t-2 border-gray-200">
+            <br />
 
             <div id="task-list" class="space-y-4">
                 <!-- Task items will be dynamically inserted here -->
@@ -76,17 +111,21 @@
         </div>
 
         <!-- Delete Confirmation Modal -->
-        <div id="delete-confirmation-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+        <div id="delete-confirmation-modal"
+            class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
             <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
                 <h2 class="text-xl font-semibold mb-4">Confirm Deletion</h2>
                 <p class="mb-6">Are you sure you want to delete all tasks? This action cannot be undone.</p>
                 <div class="flex justify-end space-x-4">
-                    <button id="cancel-delete-btn" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Cancel</button>
-                    <button id="confirm-delete-btn" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Delete</button>
+                    <button id="cancel-delete-btn"
+                        class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Cancel</button>
+                    <button id="confirm-delete-btn"
+                        class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Delete</button>
                 </div>
             </div>
         </div>
     </div>
+
 
     <script src="app.js"></script>
 </body>

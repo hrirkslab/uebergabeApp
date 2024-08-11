@@ -12,7 +12,14 @@ document.addEventListener("DOMContentLoaded", function () {
     const taskList = document.getElementById("task-list");
     const exportBtn = document.getElementById("export-btn");
 
+    const filterAllBtn = document.getElementById("filter-all-btn");
+    const filterTodoBtn = document.getElementById("filter-todo-btn");
+    const filterInfoBtn = document.getElementById("filter-info-btn");
+    const filterDoneBtn = document.getElementById("filter-done-btn");
+    const removeDoneBtn = document.getElementById("remove-done-btn");
+
     let tasks = [];
+    let currentFilter = 'all';  // default filter
 
     // Check for saved username in localStorage
     if (localStorage.getItem("username")) {
@@ -48,7 +55,6 @@ document.addEventListener("DOMContentLoaded", function () {
         const relevancyDays = parseInt(taskRelevancy.value);
         const endDate = new Date(taskDate.value);
         endDate.setDate(endDate.getDate() + relevancyDays);
-        const currentUser = localStorage.getItem("username");
 
         const newTask = {
             id: Date.now(),
@@ -59,45 +65,45 @@ document.addEventListener("DOMContentLoaded", function () {
             shift: taskShift.value,
             timestamp: new Date().toLocaleString(),
             readBy: [],
-            createdBy: currentUser, // Add this line
+            createdBy: localStorage.getItem("username"),
             done: false
         };
         tasks.push(newTask);
-
         saveTasks();
         displayTasks();
         taskForm.reset();
         taskDate.value = new Date().toISOString().split("T")[0]; // Reset to today's date
     });
 
-    const deleteAllBtn = document.getElementById("delete-all-btn");
-    const deleteConfirmationModal = document.getElementById("delete-confirmation-modal");
-    const cancelDeleteBtn = document.getElementById("cancel-delete-btn");
-    const confirmDeleteBtn = document.getElementById("confirm-delete-btn");
-
-    // Show the delete confirmation modal
-    deleteAllBtn.addEventListener("click", () => {
-        deleteConfirmationModal.classList.remove("hidden");
-    });
-
-    // Handle cancel button in modal
-    cancelDeleteBtn.addEventListener("click", () => {
-        deleteConfirmationModal.classList.add("hidden");
-    });
-
-    // Handle confirm delete button in modal
-    confirmDeleteBtn.addEventListener("click", () => {
-        tasks = [];
-        saveTasks();
+    // Filter buttons event listeners
+    filterAllBtn.addEventListener("click", () => {
+        currentFilter = 'all';
         displayTasks();
-        deleteConfirmationModal.classList.add("hidden");
     });
 
+    filterTodoBtn.addEventListener("click", () => {
+        currentFilter = 'todo';
+        displayTasks();
+    });
 
-    // Export tasks as JSON file
-    exportBtn.addEventListener("click", () => {
-        const blob = new Blob([JSON.stringify(tasks, null, 2)], { type: "application/json" });
-        saveAs(blob, "tasks.json");
+    filterInfoBtn.addEventListener("click", () => {
+        currentFilter = 'info';
+        displayTasks();
+    });
+
+    filterDoneBtn.addEventListener("click", () => {
+        currentFilter = 'done';
+        displayTasks();
+    });
+
+    // Remove done tasks with confirmation
+    removeDoneBtn.addEventListener("click", () => {
+        const confirmation = confirm("Are you sure you want to remove all completed tasks?");
+        if (confirmation) {
+            tasks = tasks.filter(task => !task.done);
+            saveTasks();
+            displayTasks();
+        }
     });
 
     // Function to display task section after login
@@ -129,26 +135,36 @@ document.addEventListener("DOMContentLoaded", function () {
         localStorage.setItem("tasks", JSON.stringify(tasks));
     }
 
-    // Function to display tasks
+    // Function to display tasks based on the current filter
     function displayTasks() {
         const currentUser = localStorage.getItem("username");
         taskList.innerHTML = "";
-        tasks.forEach((task) => {
-            // Ensure readBy array is defined
+
+        let filteredTasks = tasks;
+
+        if (currentFilter === 'todo') {
+            filteredTasks = tasks.filter(task => task.status === 'Task' && !task.done);
+        } else if (currentFilter === 'info') {
+            filteredTasks = tasks.filter(task => task.status === 'Info');
+        } else if (currentFilter === 'done') {
+            filteredTasks = tasks.filter(task => task.done);
+        }
+
+        filteredTasks.forEach((task) => {
             if (!Array.isArray(task.readBy)) {
                 task.readBy = [];
             }
-    
+
             let borderColor;
             if (task.status === "Info") {
                 borderColor = 'border-yellow-500';
             } else if (task.status === "Task") {
                 borderColor = task.done ? 'border-green-500' : 'border-blue-500';
             }
-    
+
             const taskItem = document.createElement("div");
             taskItem.className = `bg-white shadow-md rounded-lg p-4 flex justify-between items-start space-x-4 border-l-4 ${borderColor} ${task.done ? 'opacity-50' : ''}`;
-    
+
             taskItem.innerHTML = `
             <div class="flex-1">
                 <h3 class="text-lg font-semibold mb-2 ${task.done ? 'line-through' : ''}">${task.description}</h3>
@@ -192,7 +208,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 <button class="delete-btn text-red-500 hover:text-red-700" title="Delete"><i class="fas fa-trash-alt"></i></button>
             </div>
             `;
-    
+
             // Mark as read handler
             if (!task.readBy.includes(currentUser)) {
                 taskItem.querySelector(".mark-read-btn").addEventListener("click", () => {
@@ -201,7 +217,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     displayTasks(); // Refresh the task display
                 });
             }
-    
+
             // Mark as done handler
             if (task.status === "Task" && !task.done) {
                 taskItem.querySelector(".mark-done-btn").addEventListener("click", () => {
@@ -210,7 +226,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     displayTasks(); // Refresh the task display
                 });
             }
-    
+
             // Edit task handler
             taskItem.querySelector(".edit-btn").addEventListener("click", () => {
                 taskDesc.value = task.description;
@@ -222,17 +238,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 saveTasks();
                 displayTasks();
             });
-    
+
             // Delete task handler
             taskItem.querySelector(".delete-btn").addEventListener("click", () => {
                 tasks = tasks.filter(t => t.id !== task.id);
                 saveTasks();
                 displayTasks();
             });
-    
+
             taskList.appendChild(taskItem);
         });
     }
-    
-    
+
 });
