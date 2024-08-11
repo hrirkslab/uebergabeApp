@@ -8,7 +8,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const taskForm = document.getElementById("task-form");
     const taskDesc = document.getElementById("task-desc");
-    const taskType = document.getElementById("task-type");
     const taskShift = document.getElementById("task-shift");
     const taskList = document.getElementById("task-list");
     const exportBtn = document.getElementById("export-btn");
@@ -49,6 +48,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const relevancyDays = parseInt(taskRelevancy.value);
         const endDate = new Date(taskDate.value);
         endDate.setDate(endDate.getDate() + relevancyDays);
+        const currentUser = localStorage.getItem("username");
 
         const newTask = {
             id: Date.now(),
@@ -56,17 +56,41 @@ document.addEventListener("DOMContentLoaded", function () {
             date: taskDate.value,
             endDate: endDate.toISOString().split("T")[0],
             status: taskStatus.value,
-            type: taskType.value,
             shift: taskShift.value,
             timestamp: new Date().toLocaleString(),
-            read: false,
+            readBy: [],
+            createdBy: currentUser, // Add this line
             done: false
         };
         tasks.push(newTask);
+
         saveTasks();
         displayTasks();
         taskForm.reset();
         taskDate.value = new Date().toISOString().split("T")[0]; // Reset to today's date
+    });
+
+    const deleteAllBtn = document.getElementById("delete-all-btn");
+    const deleteConfirmationModal = document.getElementById("delete-confirmation-modal");
+    const cancelDeleteBtn = document.getElementById("cancel-delete-btn");
+    const confirmDeleteBtn = document.getElementById("confirm-delete-btn");
+
+    // Show the delete confirmation modal
+    deleteAllBtn.addEventListener("click", () => {
+        deleteConfirmationModal.classList.remove("hidden");
+    });
+
+    // Handle cancel button in modal
+    cancelDeleteBtn.addEventListener("click", () => {
+        deleteConfirmationModal.classList.add("hidden");
+    });
+
+    // Handle confirm delete button in modal
+    confirmDeleteBtn.addEventListener("click", () => {
+        tasks = [];
+        saveTasks();
+        displayTasks();
+        deleteConfirmationModal.classList.add("hidden");
     });
 
 
@@ -107,51 +131,108 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Function to display tasks
     function displayTasks() {
+        const currentUser = localStorage.getItem("username");
         taskList.innerHTML = "";
         tasks.forEach((task) => {
+            // Ensure readBy array is defined
+            if (!Array.isArray(task.readBy)) {
+                task.readBy = [];
+            }
+    
+            let borderColor;
+            if (task.status === "Info") {
+                borderColor = 'border-yellow-500';
+            } else if (task.status === "Task") {
+                borderColor = task.done ? 'border-green-500' : 'border-blue-500';
+            }
+    
             const taskItem = document.createElement("div");
-            taskItem.className = "bg-gray-100 p-3 rounded flex justify-between items-start space-x-3";
+            taskItem.className = `bg-white shadow-md rounded-lg p-4 flex justify-between items-start space-x-4 border-l-4 ${borderColor} ${task.done ? 'opacity-50' : ''}`;
+    
             taskItem.innerHTML = `
-                <div>
-                    <p class="text-sm">${task.timestamp}</p>
-                    <p class="font-medium">${task.description}</p>
-                    <p class="text-sm text-gray-600">Shift: ${task.shift}</p>
-                    <p class="text-sm text-gray-600">Type: ${task.type}</p>
+            <div class="flex-1">
+                <h3 class="text-lg font-semibold mb-2 ${task.done ? 'line-through' : ''}">${task.description}</h3>
+                <div class="text-sm text-gray-500 space-y-1">
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-calendar-alt text-gray-400"></i>
+                            <span>${task.date}</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-calendar-check text-gray-400"></i>
+                            <span>${task.endDate}</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-clock text-gray-400"></i>
+                            <span>${task.shift}</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-info-circle text-gray-400"></i>
+                            <span>${task.status}</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-user text-gray-400"></i>
+                            <span>${task.createdBy}</span>
+                        </div>
+                        <div class="flex items-center space-x-2 text-blue-600">
+                            <i class="fas fa-eye text-blue-400"></i>
+                            <span>${task.readBy.length > 0 ? task.readBy.join(", ") : "No one yet"}</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="flex flex-col space-y-2">
-                    ${!task.read ? `<button class="mark-read-btn text-sm text-blue-500 hover:underline">Mark as Read</button>` : ''}
-                    ${task.type === "Ja/Nein" && !task.done ? `<button class="mark-done-btn text-sm text-green-500 hover:underline">Mark as Done</button>` : ''}
-                    <button class="edit-btn text-sm text-yellow-500 hover:underline">Edit</button>
-                </div>
+            </div>
+            <div class="flex items-center space-x-2">
+                ${!task.readBy.includes(currentUser) ? `<button class="mark-read-btn text-blue-500 hover:text-blue-700" title="Mark as Read"><i class="fas fa-eye"></i></button>` : ''}
+                ${task.status === "Task" && !task.done ? `<button class="mark-done-btn text-green-500 hover:text-green-700" title="Mark as Done"><i class="fas fa-check"></i></button>` : ''}
+                <button class="edit-btn text-yellow-500 hover:text-yellow-700" title="Edit"><i class="fas fa-edit"></i></button>
+                <button class="delete-btn text-red-500 hover:text-red-700" title="Delete"><i class="fas fa-trash-alt"></i></button>
+            </div>
             `;
-
-            if (!task.read) {
+    
+            // Mark as read handler
+            if (!task.readBy.includes(currentUser)) {
                 taskItem.querySelector(".mark-read-btn").addEventListener("click", () => {
-                    task.read = true;
+                    task.readBy.push(currentUser); // Add the current user to the readBy array
                     saveTasks();
-                    displayTasks();
+                    displayTasks(); // Refresh the task display
                 });
             }
-
-            if (task.type === "Ja/Nein" && !task.done) {
+    
+            // Mark as done handler
+            if (task.status === "Task" && !task.done) {
                 taskItem.querySelector(".mark-done-btn").addEventListener("click", () => {
                     task.done = true;
-                    tasks = tasks.filter(t => t.id !== task.id);
                     saveTasks();
-                    displayTasks();
+                    displayTasks(); // Refresh the task display
                 });
             }
-
+    
+            // Edit task handler
             taskItem.querySelector(".edit-btn").addEventListener("click", () => {
                 taskDesc.value = task.description;
-                taskType.value = task.type;
+                taskDate.value = task.date;
+                taskStatus.value = task.status;
                 taskShift.value = task.shift;
+                taskRelevancy.value = (new Date(task.endDate) - new Date(task.date)) / (1000 * 60 * 60 * 24);
                 tasks = tasks.filter(t => t.id !== task.id);
                 saveTasks();
                 displayTasks();
             });
-
+    
+            // Delete task handler
+            taskItem.querySelector(".delete-btn").addEventListener("click", () => {
+                tasks = tasks.filter(t => t.id !== task.id);
+                saveTasks();
+                displayTasks();
+            });
+    
             taskList.appendChild(taskItem);
         });
     }
+    
+    
 });

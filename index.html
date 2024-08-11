@@ -6,50 +6,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Task Management Application</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 
 <body class="bg-gray-100 min-h-screen flex flex-col items-center">
-    <div class="w-full max-w-lg mt-10">
-        <h1 class="text-3xl font-bold text-center mb-5">Task Management</h1>
-        
+    <div class="w-full max-w-4xl mt-10 p-4">
+        <h1 class="text-4xl font-bold text-center mb-8">Task Management</h1>
+
         <!-- User Login -->
-        <div id="login-section" class="bg-white p-4 rounded shadow mb-5">
+        <div id="login-section" class="bg-white p-4 rounded shadow mb-8 w-full max-w-md mx-auto">
             <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
             <input type="text" id="username" class="mt-1 block w-full p-2 border rounded" placeholder="Enter your username">
             <button id="login-btn" class="mt-3 w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">Login</button>
         </div>
 
         <!-- Task Management Section -->
-        <div id="task-section" class="bg-white p-4 rounded shadow mb-5 hidden">
-            <div class="flex justify-between items-center mb-4">
-                <h2 id="welcome-user" class="text-xl font-semibold"></h2>
+        <div id="task-section" class="bg-white p-4 rounded shadow mb-8 hidden">
+            <div class="flex justify-between items-center mb-6">
+                <h2 id="welcome-user" class="text-2xl font-semibold"></h2>
                 <button id="logout-btn" class="text-sm text-blue-500 hover:underline">Logout</button>
             </div>
-            <form id="task-form" class="mb-4">
-                <div class="mb-3">
+
+            <form id="task-form" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                <div class="col-span-2">
                     <label for="task-desc" class="block text-sm font-medium text-gray-700">Task Description</label>
                     <input type="text" id="task-desc" class="mt-1 block w-full p-2 border rounded" required>
                 </div>
-                <div class="mb-3">
+                <div>
                     <label for="task-date" class="block text-sm font-medium text-gray-700">Task Date</label>
-                    <input type="date" id="task-date" class="mt-1 block w-full p-2 border rounded" value="">
+                    <input type="date" id="task-date" class="mt-1 block w-full p-2 border rounded">
                 </div>
-                <div class="mb-3">
-                    <label for="task-status" class="block text-sm font-medium text-gray-700">Task Status</label>
+                <div>
+                    <label for="task-status" class="block text-sm font-medium text-gray-700">Task Type</label>
                     <select id="task-status" class="mt-1 block w-full p-2 border rounded">
                         <option value="Info">Info</option>
-                        <option value="Task">Task</option>
+                        <option value="Task">To Do</option>
                     </select>
                 </div>
-                <div class="mb-3">
-                    <label for="task-type" class="block text-sm font-medium text-gray-700">Task Type</label>
-                    <select id="task-type" class="mt-1 block w-full p-2 border rounded">
-                        <option value="General">General</option>
-                        <option value="Ja/Nein">Ja/Nein</option>
-                    </select>
-                </div>
-                <div class="mb-3">
+                <div>
                     <label for="task-shift" class="block text-sm font-medium text-gray-700">Shift</label>
                     <select id="task-shift" class="mt-1 block w-full p-2 border rounded">
                         <option value="FD">FD</option>
@@ -58,26 +52,41 @@
                         <option value="ALLE">ALLE</option>
                     </select>
                 </div>
-                <div class="mb-3">
+                <div>
                     <label for="task-relevancy" class="block text-sm font-medium text-gray-700">Relevancy Days</label>
                     <input type="number" id="task-relevancy" class="mt-1 block w-full p-2 border rounded" value="0">
                 </div>
-                <button type="submit" class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600">Add Task</button>
+                <div class="col-span-1 lg:col-span-3">
+                    <button type="submit" class="w-full bg-green-500 text-white py-2 rounded hover:bg-green-600">Add Task</button>
+                </div>
             </form>
 
-
-            <div id="task-list" class="space-y-3">
+            <div id="task-list" class="space-y-4">
                 <!-- Task items will be dynamically inserted here -->
             </div>
 
-            <div class="mt-5">
-                <button id="export-btn" class="w-full bg-gray-500 text-white py-2 rounded hover:bg-gray-600">Export Tasks as JSON</button>
+            <div class="mt-8 flex justify-between">
+                <button id="export-btn" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+                    <i class="fas fa-file-export"></i> Export
+                </button>
+                <button id="delete-all-btn" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                    <i class="fas fa-trash-alt"></i> Delete All
+                </button>
+            </div>
+        </div>
+
+        <!-- Delete Confirmation Modal -->
+        <div id="delete-confirmation-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+            <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+                <h2 class="text-xl font-semibold mb-4">Confirm Deletion</h2>
+                <p class="mb-6">Are you sure you want to delete all tasks? This action cannot be undone.</p>
+                <div class="flex justify-end space-x-4">
+                    <button id="cancel-delete-btn" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Cancel</button>
+                    <button id="confirm-delete-btn" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Delete</button>
+                </div>
             </div>
         </div>
     </div>
-
-    
-    
 
     <script src="app.js"></script>
 </body>
