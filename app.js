@@ -1,5 +1,3 @@
-// Designed and Developed by Ujwal Subedi [hrirkslab@gmail.com] 
-
 document.addEventListener("DOMContentLoaded", function () {
     const loginSection = document.getElementById("login-section");
     const taskSection = document.getElementById("task-section");
@@ -98,15 +96,78 @@ document.addEventListener("DOMContentLoaded", function () {
         displayTasks();
     });
 
-    // Remove done tasks with confirmation
-    removeDoneBtn.addEventListener("click", () => {
-        const confirmation = confirm("Are you sure you want to remove all completed tasks?");
-        if (confirmation) {
-            tasks = tasks.filter(task => !task.done);
-            saveTasks();
-            displayTasks();
+    // Function to open a modal with title, message, and callback function
+    const modal = document.getElementById("confirmation-modal");
+    const modalTitle = document.getElementById("modal-title");
+    const modalMessage = document.getElementById("modal-message");
+    const cancelBtn = document.getElementById("modal-cancel-btn");
+    const confirmBtn = document.getElementById("modal-confirm-btn");
+
+    let confirmAction = null;
+
+    function openModal(title, message, action) {
+        modalTitle.textContent = title;
+        modalMessage.textContent = message;
+        confirmAction = action;
+        modal.classList.remove("hidden");
+    }
+
+    function closeModal() {
+        modal.classList.add("hidden");
+        confirmAction = null;
+    }
+
+    cancelBtn.addEventListener("click", closeModal);
+
+    confirmBtn.addEventListener("click", () => {
+        if (confirmAction) {
+            confirmAction();
         }
+        closeModal();
     });
+
+    function handleDelete(taskId) {
+        openModal(
+            "Confirm Deletion",
+            "Are you sure you want to delete this task? This action cannot be undone.",
+            function () {
+                tasks = tasks.filter(t => t.id !== taskId);
+                saveTasks();
+                displayTasks();
+            }
+        );
+    }
+
+    // Usage for deleting all tasks
+    function handleDeleteAll() {
+        openModal(
+            "Confirm Deletion",
+            "Are you sure you want to delete all tasks? This action cannot be undone.",
+            function () {
+                tasks = [];
+                saveTasks();
+                displayTasks();
+            }
+        );
+    }
+
+    function handleDeleteAllDoneTasks() {
+        openModal(
+            "Confirm Deletion",
+            "Are you sure you want to remove all completed tasks? This action cannot be undone.",
+            function () {
+                tasks = tasks.filter(task => !task.done);
+                saveTasks();
+                displayTasks();
+            }
+        );
+    }
+
+     // Remove done tasks with confirmation
+     removeDoneBtn.addEventListener("click", handleDeleteAllDoneTasks);
+
+    // Attach delete all handler to a button
+    document.getElementById("delete-all-btn").addEventListener("click", handleDeleteAll);
 
     // Function to display task section after login
     function displayTaskSection() {
@@ -241,11 +302,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 displayTasks();
             });
 
-            // Delete task handler
+            // Delete task handler with confirmation
             taskItem.querySelector(".delete-btn").addEventListener("click", () => {
-                tasks = tasks.filter(t => t.id !== task.id);
-                saveTasks();
-                displayTasks();
+                handleDelete(task.id);
             });
 
             taskList.appendChild(taskItem);
