@@ -1,3 +1,5 @@
+// Designed and Developed by Ujwal Subedi [hrirkslab@gmail.com] 
+
 document.addEventListener("DOMContentLoaded", function () {
     const loginSection = document.getElementById("login-section");
     const taskSection = document.getElementById("task-section");
