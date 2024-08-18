@@ -1,0 +1,7 @@
+{
+    "scripts": {
+      "build": "electron-builder build",
+      "package": "electron-builder --dir"
+    }
+  }
+  
