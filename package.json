@@ -1,7 +1,17 @@
 {
+    "name": "uebergabeApp",
+    "version": "1.0.0",
+    "description": "TODO Shift Transfer App",
+    "author": "Ujwal Subedi <hrirkslab@gmail.com>",
+    "main": "main.js",
     "scripts": {
+      "start": "electron .",
       "build": "npx electron-builder build",
       "package": "npx electron-builder --dir"
+    },
+    "devDependencies": {
+      "electron": "^26.2.2",
+      "electron-builder": "^24.13.3"
     }
   }
   
