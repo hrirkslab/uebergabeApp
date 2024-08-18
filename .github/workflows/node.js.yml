@@ -9,31 +9,19 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # Use Ubuntu for the CI job
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Clear Electron Builder Cache
-        run: rm -rf ~/.cache/electron-builder
-
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
         with:
           node-version: 14
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build and Publish Electron app
-        run: npm run build -- --publish always
+      - run: npm install
+      - run: npm run build -- --publish always
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-
-      - name: Upload Windows Artifacts
-        if: success()
-        uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v2
         with:
           name: windows-installer
           path: dist/*.exe
+        if: success()

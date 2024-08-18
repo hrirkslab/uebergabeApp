@@ -5,27 +5,29 @@
     "author": "Ujwal Subedi <hrirkslab@gmail.com>",
     "main": "app.js",
     "scripts": {
-        "start": "electron .",
-        "build": "npx electron-builder build",
-        "package": "npx electron-builder --dir"
+      "start": "electron .",
+      "build": "npx electron-builder build",
+      "package": "npx electron-builder --dir"
     },
     "build": {
-        "appId": "com.hrirkslab.uebergabeapp",
-        "publish": {
-            "provider": "github",
-            "owner": "hrirkslab",
-            "repo": "uebergabeApp"
-        },
-        "linux": {
-            "category": "Utility",
-            "target": [
-                "AppImage",
-                "snap"
-            ]
+      "appId": "com.hrirkslab.uebergabeapp",
+      "publish": [
+        {
+          "provider": "github",
+          "owner": "hrirkslab",
+          "repo": "uebergabeApp"
         }
+      ],
+      "linux": {
+        "category": "Utility",
+        "target": [
+          "AppImage",
+          "snap"
+        ]
+      }
     },
     "devDependencies": {
-        "electron": "^26.2.2",
-        "electron-builder": "^24.13.3"
+      "electron": "^26.2.2",
+      "electron-builder": "^24.13.3"
     }
-}
+  }
