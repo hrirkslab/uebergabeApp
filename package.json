@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "description": "TODO Shift Transfer App",
     "author": "Ujwal Subedi <hrirkslab@gmail.com>",
-    "main": "main.js",
+    "main": "app.js",
     "scripts": {
       "start": "electron .",
       "build": "npx electron-builder build",
