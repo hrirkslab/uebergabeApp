@@ -1,33 +1,24 @@
 {
     "name": "uebergabeApp",
     "version": "1.0.0",
-    "description": "TODO Shift Transfer App Demo",
-    "author": "Ujwal Subedi <hrirkslab@gmail.com>",
     "main": "app.js",
-    "scripts": {
-      "start": "electron .",
-      "build": "npx electron-builder build",
-      "package": "npx electron-builder --dir"
-    },
     "build": {
-      "appId": "com.hrirkslab.uebergabeapp",
-      "publish": [
-        {
-          "provider": "github",
-          "owner": "hrirkslab",
-          "repo": "uebergabeApp"
-        }
+      "appId": "com.hrirkslab.uebergabeApp", 
+      "productName": "uebergabeApp",
+      "files": [
+        "app/**/*"
       ],
-      "linux": {
-        "category": "Utility",
-        "target": [
-          "AppImage",
-          "snap"
-        ]
+      "directories": {
+        "output": "dist"
+      },
+      "win": {
+        "target": "nsis"
       }
     },
+    "dependencies": {
+      "electron": "^26.2.2"
+    },
     "devDependencies": {
-      "electron": "^26.2.2",
       "electron-builder": "^24.13.3"
     }
   }
