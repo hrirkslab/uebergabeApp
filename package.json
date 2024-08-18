@@ -1,7 +1,7 @@
 {
     "scripts": {
-      "build": "electron-builder build",
-      "package": "electron-builder --dir"
+      "build": "npx electron-builder build",
+      "package": "npx electron-builder --dir"
     }
   }
   
