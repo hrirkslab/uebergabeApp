@@ -12,6 +12,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Install Wine
+        run: |
+          sudo dpkg --add-architecture i386
+          sudo apt update
+          sudo apt install -y wine wine32 wine64
+
       - name: Clear Electron Builder Cache
         run: rm -rf ~/.cache/electron-builder
 
