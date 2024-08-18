@@ -12,16 +12,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - name: Clear Electron Builder Cache
+        run: rm -rf ~/.cache/electron-builder
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
         with:
           node-version: 14
-      - run: npm install
-      - run: npm run build --publish always
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build and Publish Electron app
+        run: npm run build
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-      - uses: actions/upload-artifact@v2
-        with:
-          name: windows-installer
-          path: dist/*.exe
+
+      - name: Upload artifacts
         if: success()
+        uses: actions/upload-artifact@v2
+        with:
+          name: electron-app
+          path: dist
