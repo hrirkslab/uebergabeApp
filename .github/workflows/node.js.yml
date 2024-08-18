@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # Use Ubuntu for the CI job
 
     steps:
       - name: Clear Electron Builder Cache
@@ -26,17 +26,14 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Install Snapcraft
-        run: sudo snap install snapcraft --classic
-
       - name: Build and Publish Electron app
         run: npm run build -- --publish always
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
-      - name: Upload artifacts
+      - name: Upload Windows Artifacts
         if: success()
         uses: actions/upload-artifact@v2
         with:
-          name: electron-app
-          path: dist
+          name: windows-installer
+          path: dist/*.exe
