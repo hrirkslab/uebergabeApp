@@ -1,4 +1,4 @@
-{
+  {
     "name": "uebergabeApp",
     "version": "1.0.0",
     "description": "TODO Shift Transfer App Demo",
@@ -8,6 +8,17 @@
       "start": "electron .",
       "build": "npx electron-builder build",
       "package": "npx electron-builder --dir"
+    },
+    "build": {
+      "appId": "com.example.uebergabeapp",
+      "publish": null,
+      "linux": {
+        "category": "Utility",
+        "target": [
+          "AppImage",
+          "snap"
+        ]
+      }
     },
     "devDependencies": {
       "electron": "^26.2.2",
