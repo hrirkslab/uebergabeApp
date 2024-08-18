@@ -23,18 +23,15 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-        working-directory: client
 
       - name: Build Electron app
         run: npm run build
-        working-directory: client
 
       - name: Package Electron app
         run: npm run package
-        working-directory: client
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
           name: electron-app
-          path: client/dist
+          path: dist
