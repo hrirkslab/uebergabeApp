@@ -1,7 +1,7 @@
 {
     "name": "uebergabeApp",
     "version": "1.0.0",
-    "description": "TODO Shift Transfer App",
+    "description": "TODO Shift Transfer App Demo",
     "author": "Ujwal Subedi <hrirkslab@gmail.com>",
     "main": "app.js",
     "scripts": {
