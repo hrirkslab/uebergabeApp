@@ -1,12 +1,11 @@
-name: Electron Build
+name: Electron Build and Publish
 
 on:
   push:
+    tags:
+      - 'v*.*.*'  # Publish on tag push (e.g., v1.0.0)
     branches:
-      - main
-  pull_request:
-    branches:
-      - main
+      - main  # Optional: Publish on main branch push
 
 jobs:
   build:
@@ -27,10 +26,13 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build Electron app
+      - name: Build and Publish Electron app
         run: npm run build
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
 
       - name: Upload artifacts
+        if: success()
         uses: actions/upload-artifact@v2
         with:
           name: electron-app
